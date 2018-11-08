@@ -28,6 +28,7 @@ public class User {
         return false;
     }
 
+
     private String getHash(String str)
     {
         if(str==null) throw new NullPointerException();
