@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MySecureDataContainer <E> implements SecureDataContainer<E> {
-    //FA
+    //FA <Users,datacollec> dove users={users.get(0).......users.get(size-1)}
 
     //IR: users != null && datacollec != null
     //    forall i. 0<=i < users.size() => users.get(i) != null
@@ -23,8 +23,8 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         datacollec= new ArrayList<>();
     }
 
-
-    public void createUser(String Id, String passw) throws NullPointerException,DuplicateUserException
+    // Crea l’identità un nuovo utente della collezione
+    public void createUser(String Id, String passw) throws DuplicateUserException
     {
         if ((Id == null) || (passw== null)) throw new NullPointerException();
         if(checkUserExitence(Id)) throw  new DuplicateUserException();
@@ -33,42 +33,94 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         users.add(user);
     }
 
+    // Rimuove l’utente dalla collezione
+    public void RemoveUser(String Id, String passw)  throws UserNotFoundException,WrongPasswordException {
+        if ((Id == null) || (passw== null)) throw new NullPointerException();
+        if(!checkUserExitence(Id)) throw  new UserNotFoundException();
+        User u = getUserbyId(Id);
+        if(!u.checkPassword(passw)) throw new WrongPasswordException();
 
-    public void RemoveUser(String Id, String passw) throws NullPointerException {
+        //Rimuovo l'utente dalle autorizzazioni in altri file
+        for(DataStruct d:datacollec)
+            if(d.getShares().contains(Id))
+                d.getShares().remove(Id);
+
+         //Rimuovo i dati di cui l'utente è proprietario
+        for(DataStruct d:datacollec)
+            if(d.getOwner().equals(Id))
+                datacollec.remove(d);
+        //Rimuovo utente
+        users.remove(getUserbyId(Id));
 
     }
 
 
-    public E remove(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException {
+    public E remove(String Owner, String passw, E data) throws UserNotFoundException {
         if ((Owner == null) || (passw== null)) throw new NullPointerException();
-        if(checkUserExitence(Owner)) throw  new UserNotFoundException();
-        datacollec.remove(getDatabyOwner(Owner));
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
 
-        return data;
+        E tmp=null;
+        for(DataStruct d:datacollec)
+        {
+            if(d.getData().equals(data)) {
+                tmp = (E) d.getData();
+                datacollec.remove(d);
+                System.out.println("diocaml");
+                return tmp;
+            }
+        }
+
+        return tmp;
     }
 
 
     // Inserisce il valore del dato nella collezione
     // se vengono rispettati i controlli di identità
-    public boolean put(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException {
+    public boolean put(String Owner, String passw, E data) throws UserNotFoundException,WrongPasswordException {
 
         if((Owner == null) || (passw == null) ||  (data == null)) throw new NullPointerException();
         if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        User u = getUserbyId(Owner);
+        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+
 
         DataStruct<E> tmp= new DataStruct<>(Owner,data);
         datacollec.add(tmp);
-
-
-        return false;
+        return true;
     }
 
-    public int getSize(String Owner, String passw) {
-        return 0;
+    // Restituisce il numero degli elementi di un utente presenti nella
+    // collezione
+    public int getSize(String Owner, String passw) throws UserNotFoundException,WrongPasswordException{
+        if((Owner == null) || (passw == null)) throw new NullPointerException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        User u = getUserbyId(Owner);
+        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+
+        int size=0;
+        for(DataStruct d:datacollec)
+        {
+            if(d.getOwner().equals(Owner))
+                size++;
+        }
+        return size;
     }
 
 
-    public E get(String Owner, String passw, E data) throws NullPointerException {
-        return null;
+    public E get(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException {
+        if ((Owner == null) || (passw== null) || (data== null)) throw new NullPointerException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+
+        E tmp=null;
+        for(DataStruct d:datacollec)
+        {
+            if(d.getData().equals(data)) {
+                tmp = (E) d.getData();
+                return tmp;
+            }
+        }
+
+        return tmp;
     }
 
 
@@ -76,12 +128,24 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
 
     }
 
-    @Override
-    public void share(String Owner, String passw, String Other, E data) throws NullPointerException {
+    //Aggiustare
+    public void share(String Owner, String passw, String Other, E data) throws UserNotFoundException,WrongPasswordException,DuplicateUserException {
+        if((Owner == null) ||(Other == null) || (passw == null) || (data == null)) throw new NullPointerException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Other)) throw  new UserNotFoundException();
+
+        User u = getUserbyId(Owner);
+        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+
+        if(getDatabyOwner(Owner).getShares().contains(Other)) throw new DuplicateUserException();
+
+
+        getDatabyOwner(Owner).addShare(Other);
+
 
     }
 
-    @Override
+
     public Iterator<E> getIterator(String Owner, String passw) throws NullPointerException {
         return null;
     }

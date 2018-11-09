@@ -23,4 +23,13 @@ public class DataStruct<E> {
     public ArrayList<String> getShares() {
         return shares;
     }
+
+    public E getData() {
+        return data;
+    }
+
+    public void addShare(String Id)
+    {
+      shares.add(Id);
+    }
 }
