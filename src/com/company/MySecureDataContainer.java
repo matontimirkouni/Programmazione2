@@ -1,12 +1,12 @@
 package com.company;
 
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class MySecureDataContainer <E> implements SecureDataContainer<E> {
-    //FA <Users,datacollec> dove users={users.get(0).......users.get(size-1)}
+    //FA <Users,datacollec> dove
+    //users={users.get(0).......users.get(users.size-1)}
+    //datacollec={datacollec.get(0).....datacollec.get(datacollec.size - 1)}
 
     //IR: users != null && datacollec != null
     //    forall i. 0<=i < users.size() => users.get(i) != null
@@ -146,8 +146,23 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     }
 
 
-    public Iterator<E> getIterator(String Owner, String passw) throws NullPointerException {
-        return null;
+    public Iterator<E> getIterator(String Owner, String passw) throws UserNotFoundException,WrongPasswordException {
+        if((Owner == null))  throw new NullPointerException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        User u = getUserbyId(Owner);
+        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+
+        ArrayList<E> ls = new ArrayList<>();
+
+        for(DataStruct d:datacollec)
+            if((d.getOwner().equals(Owner)) || (d.getShares().contains(Owner)))
+                ls.add((E)d.getData());
+
+        //Collection<E> mycollection = Collections.unmodifiableCollection(ls);
+        Iterator<E> it = ls.iterator();
+
+        return it;
+
     }
 
 
@@ -180,3 +195,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
 
 
 }
+
+
+
+

@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Main {
 
@@ -13,6 +14,8 @@ public class Main {
         ut.add(tmp);
         ut.add(tmp2);
 
+
+
         MySecureDataContainer<ArrayList<User>> c = new MySecureDataContainer<>();
        try {
            c.createUser("lello", "marco");
@@ -22,15 +25,24 @@ public class Main {
            //c.put("lello2","marco","wuoo3");
 
            //c.share("lello","marco","lello2",ut);
-           ut.remove(0);
+           //ut.remove(0);
 
            ArrayList<User> pp= c.get("lello","marco",ut);
           // System.out.println(c.getSize("lello","marco"));
-           c.remove("lello2","marco",ut);
+           //c.remove("lello2","marco",ut);
            //System.out.println(c.getSize("lello2","marco"));
 
          //  c.createUser("lello", "marco");
            System.out.println(c.getSize("lello","marco"));
+
+           //ut.clear();
+           System.out.println(c.getSize("lello","marco"));
+
+           Iterator<ArrayList<User>> it = c.getIterator("lello","marco");
+
+           it.remove();
+
+           System.out.println("lol");
        }
        catch (Exception ex)
        {

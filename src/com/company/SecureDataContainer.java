@@ -108,6 +108,7 @@ public interface SecureDataContainer<E> {
      @THROWS: NullPointerException se owner == null || passw == null
               UserNotFoundException (checked) se Owner non è presente
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
+
      **/
 
 }
