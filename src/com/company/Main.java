@@ -21,6 +21,8 @@ public class Main {
            c.createUser("lello", "marco");
            c.createUser("lello2", "marco");
            c.put("lello","marco",ut);
+           c.put("lello","marco",ut);
+           c.put("lello","marco",ut);
            //c.put("lello2","marco","wuoo2");
            //c.put("lello2","marco","wuoo3");
 
@@ -29,18 +31,19 @@ public class Main {
 
            ArrayList<User> pp= c.get("lello","marco",ut);
           // System.out.println(c.getSize("lello","marco"));
-           //c.remove("lello2","marco",ut);
+           c.RemoveUser("lello","marco");
+
            //System.out.println(c.getSize("lello2","marco"));
 
-         //  c.createUser("lello", "marco");
-           System.out.println(c.getSize("lello","marco"));
+           c.createUser("lello3", "marco");
+          //System.out.println(c.getSize("lello","marco"));
 
            //ut.clear();
-           System.out.println(c.getSize("lello","marco"));
+           //System.out.println(c.getSize("lello","marco"));
 
            Iterator<ArrayList<User>> it = c.getIterator("lello","marco");
 
-           it.remove();
+           //it.remove();
 
            System.out.println("lol");
        }
@@ -48,5 +51,6 @@ public class Main {
        {
             System.out.println(ex);
        }
+
     }
 }

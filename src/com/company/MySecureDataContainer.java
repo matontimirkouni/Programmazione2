@@ -45,27 +45,34 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
             if(d.getShares().contains(Id))
                 d.getShares().remove(Id);
 
-         //Rimuovo i dati di cui l'utente è proprietario
-        for(DataStruct d:datacollec)
-            if(d.getOwner().equals(Id))
+        //Rimuovo i dati di cui l'utente è proprietario
+        for(int i=0;i< datacollec.size();i++)
+        {
+            DataStruct d = datacollec.get(i);
+            if(d.getOwner().equals(Id)) {
                 datacollec.remove(d);
+                i--;
+            }
+        }
+
         //Rimuovo utente
         users.remove(getUserbyId(Id));
 
     }
 
 
-    public E remove(String Owner, String passw, E data) throws UserNotFoundException {
+    public E remove(String Owner, String passw, E data) throws UserNotFoundException,WrongPasswordException {
         if ((Owner == null) || (passw== null)) throw new NullPointerException();
         if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        User u = getUserbyId(Owner);
+        if(!u.checkPassword(passw)) throw new WrongPasswordException();
 
         E tmp=null;
         for(DataStruct d:datacollec)
         {
-            if(d.getData().equals(data)) {
+            if((d.getOwner().equals(Owner)) && (d.getData().equals(data))){
                 tmp = (E) d.getData();
                 datacollec.remove(d);
-                System.out.println("diocaml");
                 return tmp;
             }
         }
@@ -77,7 +84,6 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // Inserisce il valore del dato nella collezione
     // se vengono rispettati i controlli di identità
     public boolean put(String Owner, String passw, E data) throws UserNotFoundException,WrongPasswordException {
-
         if((Owner == null) || (passw == null) ||  (data == null)) throw new NullPointerException();
         if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
         User u = getUserbyId(Owner);
@@ -107,9 +113,11 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     }
 
 
-    public E get(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException {
+    public E get(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException{
         if ((Owner == null) || (passw== null) || (data== null)) throw new NullPointerException();
         if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        User u = getUserbyId(Owner);
+        if(!u.checkPassword(passw)) throw new WrongPasswordException();
 
         E tmp=null;
         for(DataStruct d:datacollec)
@@ -137,10 +145,10 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         User u = getUserbyId(Owner);
         if(!u.checkPassword(passw)) throw new WrongPasswordException();
 
-        if(getDatabyOwner(Owner).getShares().contains(Other)) throw new DuplicateUserException();
+        if(getDataObject(Owner,data).getShares().contains(Other)) throw new DuplicateUserException();
 
 
-        getDatabyOwner(Owner).addShare(Other);
+        getDataObject(Owner,data).addShare(Other);
 
 
     }
@@ -185,10 +193,10 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         return null;
     }
 
-    private DataStruct getDatabyOwner(String Owner)
+    private DataStruct getDataObject(String Owner,E data)
     {
         for(DataStruct d:datacollec)
-            if(d.getOwner().equals(Owner))
+            if(d.getOwner().equals(Owner) && d.getData().equals(data))
                 return d;
         return null;
     }
