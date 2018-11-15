@@ -43,6 +43,7 @@ public class Main {
 
            Iterator<ArrayList<User>> it = c.getIterator("lello","marco");
 
+
            //it.remove();
 
            System.out.println("lol");

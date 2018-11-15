@@ -3,8 +3,8 @@ package com.company;
 import java.util.Iterator;
 
 public interface SecureDataContainer<E> {
-    //Overview : tipo di dato modificabile che rappresenta una collezione di dati di tipo E
-    //Typical Element:
+    //Overview : tipo di dato modificabile che rappresenta una collezione di dati di tipo E e di utenti proprietari
+    //Typical Element: {<users(0),data(0)>......<users(size-1),data(size-1)>}
 
 
     // Crea l’identità un nuovo utente della collezione
@@ -23,7 +23,7 @@ public interface SecureDataContainer<E> {
     /**
     @REQUIRES: Id != null && passw != null
     @MODIFIES: this
-    @EFFECTS: rimuove se presente l'utente
+    @EFFECTS: rimuove dalla collazione se presente l'utente <id,passw>
     @THROWS: NullPointerException se id == null || passw == null
              UserNotFoundException (checked) se l'utente non è presente
              WrongPasswordException (checked) se non vengono rispettati i controlli di identità

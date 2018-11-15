@@ -11,15 +11,16 @@ public class User {
 
     public User(String id,String Password)
     {
-
         this.id = id;
         this.password = getHash(Password);
     }
 
+    //Ritorna id utente
     public String getId() {
         return id;
     }
 
+    //Metodo controllo identità
     public boolean checkPassword(String password)
     {
         String tmp = getHash(password);
