@@ -14,6 +14,7 @@ public class DataStruct<E> {
         this.owner=owner;
         this.data=data;
         this.shares= new ArrayList<>();
+
     }
 
     public String getOwner() {

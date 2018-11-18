@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.Iterator;
+import com.company.Exception.*;
 
 public interface SecureDataContainer<E> {
     //Overview : tipo di dato modificabile che rappresenta una collezione di dati di tipo E e di utenti proprietari
@@ -113,37 +114,3 @@ public interface SecureDataContainer<E> {
 
 }
 
-
-class UserNotFoundException extends Exception
-{
-    public  UserNotFoundException()
-    {
-        super();
-    }
-    public  UserNotFoundException(String s)
-    {
-        super(s);
-    }
-}
-class WrongPasswordException extends Exception
-{
-    public  WrongPasswordException()
-    {
-        super();
-    }
-    public  WrongPasswordException(String s)
-    {
-        super(s);
-    }
-}
-class DuplicateUserException extends Exception
-{
-    public  DuplicateUserException()
-    {
-        super();
-    }
-    public  DuplicateUserException(String s)
-    {
-        super(s);
-    }
-}

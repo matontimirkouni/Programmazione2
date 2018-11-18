@@ -17,6 +17,7 @@ public class Main {
 
 
         MySecureDataContainer<ArrayList<User>> c = new MySecureDataContainer<>();
+        MySecureDataContainer2<ArrayList<User>> c2 = new MySecureDataContainer2<>();
        try {
            c.createUser("lello", "marco");
            c.createUser("lello2", "marco");
@@ -28,7 +29,7 @@ public class Main {
 
            //c.share("lello","marco","lello2",ut);
            //ut.remove(0);
-
+           c2.createUser("nemp","uci");
            ArrayList<User> pp= c.get("lello","marco",ut);
           // System.out.println(c.getSize("lello","marco"));
            c.RemoveUser("lello","marco");

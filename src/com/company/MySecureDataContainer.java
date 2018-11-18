@@ -2,6 +2,7 @@ package com.company;
 
 
 import java.util.*;
+import com.company.Exception.*;
 
 public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     //FA <Users,datacollec> dove
@@ -160,7 +161,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
      @EFFECTS: Superati i controlli di identità,restituisce size ovvero il numero degli elementi di utente presenti
                nella collezione
      @THROWS: NullPointerException se Owner == null || passw == null
-              UserNotFoundException (checked) se l'utente non è presente (checkUserExitence(Id)=False)
+              UserNotFoundException (checked) se l'utente non è presente (checkUserExitence(Id)=False
+              WrongPasswordException se i controlli di indentità non sono rispettati
+
      **/
 
 
