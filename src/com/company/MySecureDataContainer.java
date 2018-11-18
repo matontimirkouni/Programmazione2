@@ -179,7 +179,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         E tmp=null;
         for(DataStruct<E> d:datacollec)
         {
-            if(d.getData().equals(data)) {
+            if(d.getData().equals(data) && (d.getOwner().equals(Owner) || d.getShares().contains(Owner))) {
                 tmp = d.getData();
 
             }

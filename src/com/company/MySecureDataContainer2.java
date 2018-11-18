@@ -5,9 +5,14 @@ import java.util.*;
 import com.company.Exception.*;
 
 public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
-    //FA
+    //FA <users,datacollection> dove
+    //users={users.get(0).......users.get(users.size-1)}
+    //datacollec={datacollec.get(0).....datacollec.get(datacollec.size - 1)}
 
-    //IR:
+    //IR: users != null && datacollection !=  null
+    //forall i. 0<=i < users.size() => users.get(i) != null
+    //forall i,j. 0<=i,j< users.size() i!= j => users.get(i) != users.get(j)
+    //forall i. 0<=i < datacollec.size() => datacollec.get(i) != null
 
     private Hashtable<String,List<E>> datacollection;
     private Hashtable<String,String> users;
@@ -33,11 +38,27 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
      @THROWS: NullPointerException se id == null || passw == null
               DuplicateUserException se user.id già presente
      **/
+    /**Attualmente non rimuove i dati che ID ha condiviso con altri**/
+    // Rimuove l’utente dalla collezione
+    public void RemoveUser(String Id, String passw) throws NullPointerException,UserNotFoundException,WrongPasswordException{
+        if((Id == null) || (passw == null)) throw new NullPointerException();
+        if(!users.containsKey(Id)) throw  new UserNotFoundException();
+        if(!checkUserPassword(Id,passw)) throw new WrongPasswordException();
 
 
-    public void RemoveUser(String Id, String passw) throws NullPointerException {
+        datacollection.remove(Id);
+        users.remove(Id);
 
     }
+    /**
+     @REQUIRES: Id != null && passw != null
+     @MODIFIES: this.users && this.datacollec
+     @EFFECTS: Se l'utente è presente nella collezione rimuove i dati a lui associati ovvero quelli di cui è proprietario
+     ed i riferimenti a lui nei file condivisi da altri utenti, per finire elimina l'utente dalla lista users
+     @THROWS: NullPointerException se id == null || passw == null
+              UserNotFoundException (checked) se l'utente non è presente (checkUserExitence(Id)=False)
+              WrongPasswordException (checked) se non vengono rispettati i controlli di identità (checkPassword(passw)=False)
+     **/
 
     // Restituisce il numero degli elementi di un utente presenti nella
     // collezione
@@ -85,9 +106,29 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
      **/
 
 
-    public E get(String Owner, String passw, E data) throws NullPointerException {
-        return null;
+    // Ottiene una copia del valore del dato nella collezione
+    // se vengono rispettati i controlli di identità
+    public E get(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException ,WrongPasswordException{
+        if((Owner == null) || (passw == null) ||  (data == null)) throw new NullPointerException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+
+        List<E> dt=datacollection.get(Owner);
+        int i= dt.indexOf(data);
+        if(i == -1)
+            return null;
+        else
+            return dt.get(i);
     }
+    /**
+     @REQUIRES: Owner != null && passw != null && data != null
+     @EFFECTS: Superati i controlli di identità restituisce il riferimento a'data'
+               Se 'data' è presente in molteplice copia restituisce la prima trovata
+               Se 'data' non è presente ritorna null
+     @THROWS: NullPointerException se owner == null || passw == null || data== null
+              UserNotFoundException (checked) se Owner non è presente
+              WrongPasswordException (checked) se non vengono rispettati i controlli di identità
+     **/
 
     // Condivide il dato nella collezione con un altro utente
     // se vengono rispettati i controlli di identità
@@ -98,7 +139,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
 
         String prvpassother= users.get(Other);
-        this.put(Owner,prvpassother,data);
+        this.put(Other,prvpassother,data);
     }
     /**
      @REQUIRES: Owner != null && passw != null &&  Other != null && data != null
@@ -110,10 +151,40 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
               DuplicateUserException se Other è già autorizzato alla visione di data
      **/
 
+    /**Attualmente rimuove solo il dato se owner**/
+    // Rimuove il dato nella collezione
+    // se vengono rispettati i controlli di identità
+    public E remove(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException{
+        if((Owner == null) || (passw == null) ||(data==null)) throw new NullPointerException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
 
-    public E remove(String Owner, String passw, E data) throws NullPointerException {
-        return null;
+        E tmp= null;
+        List<E> ls = datacollection.get(Owner);
+        for(int i=0;i < ls.size();i++)
+        {
+            if(ls.get(i).equals(data)) {
+                tmp=ls.get(i);
+                ls.remove(i);
+                i--;
+            }
+
+        }
+        return tmp;
+
+
     }
+    /**
+     @REQUIRES: Owner != null && passw != null && data != null
+     @MODIFIES: this.datacollec
+     @EFFECTS: Se il dato non è presente ritorna Null
+               Se il dato è presente viene conservato in 'tmp' prima di essere rimosso dalla collezione e
+               ritornato al chiamante
+                Se il dato è presente im molteplice copia verranno rimosse tutte e la funzione restituisce l'ultima rimossa
+     @THROWS: NullPointerException se owner == null || passw == null || data== null
+              UserNotFoundException (checked) se Owner non è presente
+              WrongPasswordException (checked) se non vengono rispettati i controlli di identità
+     **/
 
     // Crea una copia del dato nella collezione
     // se vengono rispettati i controlli di identità

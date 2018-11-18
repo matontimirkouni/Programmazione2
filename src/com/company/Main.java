@@ -14,6 +14,9 @@ public class Main {
         ut.add(tmp);
         ut.add(tmp2);
 
+        ArrayList<User> ut2 = new ArrayList<>();
+        ut2.add(tmp2);
+
 
 
         MySecureDataContainer<ArrayList<User>> c = new MySecureDataContainer<>();
@@ -21,9 +24,34 @@ public class Main {
        try {
            c.createUser("lello", "marco");
            c.createUser("lello2", "marco");
+           c.createUser("fi", "marco");
            c.put("lello","marco",ut);
-           c.put("lello","marco",ut);
-           c.put("lello","marco",ut);
+           c.put("lello2","marco",ut);
+           c.put("lello2","marco",ut);
+           c.copy("lello","marco",ut);
+           c.put("lello","marco", ut2);
+           c.share("lello","marco","fi",ut2);
+
+
+
+           c2.createUser("lello", "marco");
+           c2.createUser("lello2", "marco");
+           c2.createUser("fi", "marco");
+           c2.put("lello","marco",ut);
+           c2.put("lello2","marco",ut);
+           c2.put("lello2","marco",ut);
+           c2.copy("lello","marco",ut);
+           c2.put("lello","marco", ut2);
+           c2.share("lello","marco","fi",ut2);
+
+
+
+           ArrayList<User> t =c.get("lello2","marco",ut2);
+
+           ArrayList<User> t2 =c2.get("lello2","marco",ut2);
+
+
+
            //c.put("lello2","marco","wuoo2");
            //c.put("lello2","marco","wuoo3");
 
@@ -43,6 +71,8 @@ public class Main {
            //System.out.println(c.getSize("lello","marco"));
 
            Iterator<ArrayList<User>> it = c.getIterator("lello","marco");
+           Iterator<ArrayList<User>> it2 = c2.getIterator("lello","marco");
+
 
 
            //it.remove();
