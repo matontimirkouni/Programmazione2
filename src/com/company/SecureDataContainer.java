@@ -88,7 +88,7 @@ public interface SecureDataContainer<E> {
 
     // Condivide il dato nella collezione con un altro utente
     // se vengono rispettati i controlli di identità
-    public void share(String Owner, String passw, String Other, E data)throws  NullPointerException,UserNotFoundException,WrongPasswordException,DuplicateUserException;
+    public void share(String Owner, String passw, String Other, E data)throws  NullPointerException,UserNotFoundException,WrongPasswordException;
     /**
      @REQUIRES: Owner != null && passw != null &&  Other != null && data != null
      @MODIFIES: this
@@ -96,7 +96,6 @@ public interface SecureDataContainer<E> {
      @THROWS: NullPointerException se owner == null || passw == null || data== null || Other == nul
               UserNotFoundException (checked) se Owner oppure Other non sono presente
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
-              DuplicateUserException se Other è già autorizzato alla visione di data
      **/
 
     // restituisce un iteratore (senza remove) che genera tutti i dati

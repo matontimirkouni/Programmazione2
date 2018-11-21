@@ -42,8 +42,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     // Rimuove l’utente dalla collezione
     public void RemoveUser(String Id, String passw) throws NullPointerException,UserNotFoundException,WrongPasswordException{
         if((Id == null) || (passw == null)) throw new NullPointerException();
-        if(!users.containsKey(Id)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Id,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Id)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Id,passw)) throw new WrongPasswordException("Wrong password");
 
 
         datacollection.remove(Id);
@@ -64,8 +64,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     // collezione
     public int getSize(String Owner, String passw) throws NullPointerException,UserNotFoundException ,WrongPasswordException{
         if((Owner == null) || (passw == null)) throw new NullPointerException();
-        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         return datacollection.get(Owner).size();
     }
@@ -82,8 +82,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     // se vengono rispettati i controlli di identità
     public boolean put(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException{
         if((Owner == null) || (passw == null) ||  (data == null)) throw new NullPointerException();
-        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
 
         List<E> dt= datacollection.get(Owner);
@@ -110,8 +110,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     // se vengono rispettati i controlli di identità
     public E get(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException ,WrongPasswordException{
         if((Owner == null) || (passw == null) ||  (data == null)) throw new NullPointerException();
-        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         List<E> dt=datacollection.get(Owner);
         int i= dt.indexOf(data);
@@ -132,11 +132,11 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
 
     // Condivide il dato nella collezione con un altro utente
     // se vengono rispettati i controlli di identità
-    public void share(String Owner, String passw, String Other, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException,DuplicateUserException {
+    public void share(String Owner, String passw, String Other, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException {
         if((Owner == null) || (passw == null) ||(Other== null) || (data==null)) throw new NullPointerException();
-        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
-        if(!users.containsKey(Other)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
+        if(!users.containsKey(Other)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         String prvpassother= users.get(Other);
         this.put(Other,prvpassother,data);
@@ -156,8 +156,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     // se vengono rispettati i controlli di identità
     public E remove(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException{
         if((Owner == null) || (passw == null) ||(data==null)) throw new NullPointerException();
-        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp= null;
         List<E> ls = datacollection.get(Owner);
@@ -190,8 +190,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     // se vengono rispettati i controlli di identità
     public void copy(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException{
         if((Owner == null) || (passw == null) ||(data==null)) throw new NullPointerException();
-        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         this.put(Owner,passw,data);
     }
@@ -209,8 +209,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     // se vengono rispettati i controlli di identità
     public Iterator<E> getIterator(String Owner, String passw) throws NullPointerException,UserNotFoundException,WrongPasswordException {
         if((Owner == null) || (passw == null)) throw new NullPointerException();
-        if(!users.containsKey(Owner)) throw  new UserNotFoundException();
-        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException();
+        if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
+        if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
 
         Iterator<E> it = datacollection.get(Owner).iterator();

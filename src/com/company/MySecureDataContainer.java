@@ -28,7 +28,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     public void createUser(String Id, String passw) throws DuplicateUserException
     {
         if ((Id == null) || (passw== null)) throw new NullPointerException();
-        if(checkUserExitence(Id)) throw  new DuplicateUserException();
+        if(checkUserExitence(Id)) throw  new DuplicateUserException("Duplicated user");
 
         User user = new User(Id,passw);
         users.add(user);
@@ -45,9 +45,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // Rimuove l’utente dalla collezione
     public void RemoveUser(String Id, String passw)  throws UserNotFoundException,WrongPasswordException {
         if ((Id == null) || (passw== null)) throw new NullPointerException();
-        if(!checkUserExitence(Id)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Id)) throw  new UserNotFoundException("User not found");
         User u = getUserbyId(Id);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         //Rimuovo l'utente dalle autorizzazioni in altri file
         for(DataStruct d:datacollec)
@@ -84,9 +84,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // se vengono rispettati i controlli di identità
     public E remove(String Owner, String passw, E data) throws UserNotFoundException,WrongPasswordException {
         if ((Owner == null) || (passw== null)) throw new NullPointerException();
-        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException("User not found");
         User u = getUserbyId(Owner);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp=null;
         for(int i=0;i< datacollec.size();i++)
@@ -119,9 +119,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // se vengono rispettati i controlli di identità
     public boolean put(String Owner, String passw, E data) throws UserNotFoundException,WrongPasswordException {
         if((Owner == null) || (passw == null) ||  (data == null)) throw new NullPointerException();
-        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException("User not found");
         User u = getUserbyId(Owner);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
 
         DataStruct<E> tmp= new DataStruct<>(Owner,data);
@@ -144,9 +144,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // collezione
     public int getSize(String Owner, String passw) throws UserNotFoundException,WrongPasswordException{
         if((Owner == null) || (passw == null)) throw new NullPointerException();
-        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException("User not found");
         User u = getUserbyId(Owner);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         int size=0;
         for(DataStruct d:datacollec)
@@ -172,9 +172,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // se vengono rispettati i controlli di identità
     public E get(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException{
         if ((Owner == null) || (passw== null) || (data== null)) throw new NullPointerException();
-        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException("User not found");
         User u = getUserbyId(Owner);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp=null;
         for(DataStruct<E> d:datacollec)
@@ -202,9 +202,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // se vengono rispettati i controlli di identità
     public void copy(String Owner, String passw, E data) throws NullPointerException,UserNotFoundException,WrongPasswordException{
         if ((Owner == null) || (passw== null) || (data== null)) throw new NullPointerException();
-        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException("User not found");
         User u = getUserbyId(Owner);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         DataStruct<E> tmp = getDataObject(Owner,data);
         datacollec.add(tmp);
@@ -222,20 +222,20 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
 
     // Condivide il dato nella collezione con un altro utente
     // se vengono rispettati i controlli di identità
-    public void share(String Owner, String passw, String Other, E data) throws UserNotFoundException,WrongPasswordException,DuplicateUserException {
+    public void share(String Owner, String passw, String Other, E data) throws UserNotFoundException,WrongPasswordException {
         if((Owner == null) ||(Other == null) || (passw == null) || (data == null)) throw new NullPointerException();
-        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
-        if(!checkUserExitence(Other)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException("User not found");
+        if(!checkUserExitence(Other)) throw  new UserNotFoundException("User not found");
 
         User u = getUserbyId(Owner);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
 
         for(int i=0;i < datacollec.size();i++) {
             DataStruct<E> d = datacollec.get(i);
             if (d.getOwner().equals(Owner) && d.getData().equals(data)) {
                 if (d.getShares().contains(Other))
-                    throw new DuplicateUserException("Utente già presente");
+                    return;
                 d.addShare(Other);
             }
         }
@@ -260,9 +260,9 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     // se vengono rispettati i controlli di identità
     public Iterator<E> getIterator(String Owner, String passw) throws UserNotFoundException,WrongPasswordException {
         if((Owner == null))  throw new NullPointerException();
-        if(!checkUserExitence(Owner)) throw  new UserNotFoundException();
+        if(!checkUserExitence(Owner)) throw  new UserNotFoundException("User not found");
         User u = getUserbyId(Owner);
-        if(!u.checkPassword(passw)) throw new WrongPasswordException();
+        if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         ArrayList<E> ls = new ArrayList<>();
         for(DataStruct d:datacollec)
