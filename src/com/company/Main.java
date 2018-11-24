@@ -45,6 +45,10 @@ public class Main {
             securecontainer.createUser("giovanni", "97314652");
             System.out.println("CREATEUSER eseguita correttamente");
         }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
         catch(DuplicateUserException ex)
         {
             System.out.println("Eccezione catturata " + ex.getMessage());
@@ -60,6 +64,10 @@ public class Main {
             securecontainer.put("lory", "172839465",dt2);
             securecontainer.put("lory", "172839465",dt3);
             System.out.println("PUT eseguita correttamente");
+        }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
         }
         catch(UserNotFoundException ex)
         {
@@ -77,6 +85,10 @@ public class Main {
             securecontainer.copy("luca", "12345678",dt1);
             System.out.println("COPY eseguita correttamente");
         }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
         catch(UserNotFoundException ex)
         {
             System.out.println("Eccezione catturata " + ex.getMessage());
@@ -93,6 +105,10 @@ public class Main {
             securecontainer.remove("luca", "12345678",dt1);
             System.out.println("Remove eseguita correttamente");
         }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
         catch(UserNotFoundException ex)
         {
             System.out.println("Eccezione catturata " + ex.getMessage());
@@ -107,6 +123,10 @@ public class Main {
         {
             securecontainer.share("marco", "87654321","giovanni",dt1);
             System.out.println("Share eseguita correttamente");
+        }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
         }
         catch(UserNotFoundException ex)
         {
@@ -124,6 +144,10 @@ public class Main {
             securecontainer.get("giovanni", "97314652",dt1);
             System.out.println("GET eseguita correttamente");
         }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
         catch(UserNotFoundException ex)
         {
             System.out.println("Eccezione catturata " + ex.getMessage());
@@ -137,6 +161,10 @@ public class Main {
         {
             securecontainer.getSize("giovanni", "97314652");
             System.out.println("GETSIZE eseguita correttamente");
+        }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
         }
         catch(UserNotFoundException ex)
         {
@@ -153,6 +181,10 @@ public class Main {
             securecontainer.RemoveUser("giovanni", "97314652");
             System.out.println("REMOVEUSER eseguita correttamente");
         }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
         catch(UserNotFoundException ex)
         {
             System.out.println("Eccezione catturata " + ex.getMessage());
@@ -166,6 +198,10 @@ public class Main {
         {
             securecontainer.getIterator("luca", "12345678");
             System.out.println("GETITERATOR eseguita correttamente");
+        }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
         }
         catch(UserNotFoundException ex)
         {
@@ -188,6 +224,10 @@ public class Main {
             System.out.println("Aggiungo un utente già esistente");
             securecontainer.createUser("luca", "12345678");
         }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
         catch(DuplicateUserException ex)
         {
             System.out.println("Eccezione catturata " + ex.getMessage());
@@ -198,6 +238,10 @@ public class Main {
         {
             System.out.println("Rimuovo un utente non esistente");
             securecontainer.RemoveUser("alfredo", "45689518");
+        }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
         }
         catch(UserNotFoundException ex)
         {
@@ -214,6 +258,10 @@ public class Main {
             System.out.println("Elimino un dato di luca con password sbagliata");
             securecontainer.remove("luca", "passwordno",dt1);
         }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
         catch(UserNotFoundException ex)
         {
             System.out.println("Eccezione catturata " + ex.getMessage());
@@ -228,6 +276,28 @@ public class Main {
         {
             System.out.println("Condivido un dato di luca con un utente non esistente");
             securecontainer.share("luca", "12345678","usernot",dt1);
+        }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
+        catch(UserNotFoundException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
+        catch(WrongPasswordException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
+        }
+        //condivido un dato di luca con un utente non esistente + TEST NULL
+        try
+        {
+            System.out.println("Condivido un dato di luca con un utente non esistente + test NULL");
+            securecontainer.share(null, "12345678","usernot",dt1);
+        }
+        catch(NullPointerException ex)
+        {
+            System.out.println("Eccezione catturata " + ex.getMessage());
         }
         catch(UserNotFoundException ex)
         {

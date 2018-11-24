@@ -35,10 +35,9 @@ SCELTE 1° IMPLEMENTAZIONE (MySecureDataContainer)
 
 SCELTE 2° IMPLEMENTAZIONE (MySecureDataContainer2)
 
-        IMPLEMENTAZIONE di DataStruct
+        IMPLEMENTAZIONE di DataStruct2
             la classe serve per semplificare la memorizzazione dei dati dell'utente inoltre fornisce un supporto per ulteriori espansioni. Un oggetto
             di tipo DataStruct è definito nel seguente modo:
-                String owner - utente proprietario
                 E data - dato di tipo E fornito dall'utente
                 ArrayList<String> shares - lista che contiene gli utenti che possono accedere al file
 

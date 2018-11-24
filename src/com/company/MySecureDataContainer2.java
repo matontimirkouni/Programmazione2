@@ -14,7 +14,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     //forall i,j. 0<=i,j< users.size() i!= j => users.get(i) != users.get(j)
     //forall i. 0<=i < datacollec.size() => datacollec.get(i) != null
 
-    private Hashtable<String,List<DataStruct<E>>> datacollection;
+    private Hashtable<String,List<DataStruct2<E>>> datacollection;
     private Hashtable<String,String> users;
 
     public MySecureDataContainer2()
@@ -32,8 +32,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     }
     /**
      @REQUIRES: Id != null && passw != null
-     @MODIFIES: this
-     @EFFECTS: crea un nuovo utente nella collezione
+     @MODIFIES: this.users
+     @EFFECTS: Crea un nuovo utente nella collezione
      @THROWS: NullPointerException se id == null || passw == null
               DuplicateUserException se user.id già presente
      **/
@@ -46,9 +46,10 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!users.containsKey(Id)) throw  new UserNotFoundException("User not found");
         if(!checkUserPassword(Id,passw)) throw new WrongPasswordException("Wrong password");
 
+
         //Rimuovo l'utente dalle autorizzazioni in altri file
         for(String s:datacollection.keySet())
-            for(DataStruct d:datacollection.get(s))
+            for(DataStruct2 d:datacollection.get(s))
                 if(d.getShares().contains(Id))
                     d.getShares().remove(Id);
 
@@ -59,7 +60,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
      @REQUIRES: Id != null && passw != null
      @MODIFIES: this.users && this.datacollec
      @EFFECTS: Se l'utente è presente nella collezione rimuove i dati a lui associati ovvero quelli di cui è proprietario
-     ed i riferimenti a lui nei file condivisi da altri utenti, per finire elimina l'utente dalla lista users
+               ed i riferimenti a lui nei file condivisi da altri utenti, per finire elimina l'utente dalla lista users
      @THROWS: NullPointerException se id == null || passw == null
               UserNotFoundException (checked) se l'utente non è presente (checkUserExitence(Id)=False)
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità (checkPassword(passw)=False)
@@ -80,7 +81,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     /**
      @REQUIRES: Owner != null && passw != null
      @EFFECTS: Superati i controlli di identità,restituisce size ovvero il numero degli elementi di un utente presenti
-     nella collezione (solo quelli di cui è proprietario)
+               nella collezione (solo quelli di cui è proprietario)
      @THROWS: NullPointerException se Owner == null || passw == null
               UserNotFoundException (checked) se l'utente non è presente (checkUserExitence(Id)=False)
               WrongPasswordException se i controlli di indentità non sono rispettati
@@ -93,13 +94,13 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!users.containsKey(Owner)) throw  new UserNotFoundException("User not found");
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
-        List<DataStruct<E>> dt= datacollection.get(Owner);
+        List<DataStruct2<E>> dt= datacollection.get(Owner);
         if (dt==null)
         {
             dt=new ArrayList<>();
             datacollection.put(Owner,dt);
         }
-        DataStruct<E> tmp= new DataStruct<>(Owner,data);
+        DataStruct2<E> tmp= new DataStruct2<>(data);
         return dt.add(tmp);
     }
     /**
@@ -122,10 +123,10 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp = null;
-        List<DataStruct<E>> dt=datacollection.get(Owner);
+        List<DataStruct2<E>> dt=datacollection.get(Owner);
         for(String s:datacollection.keySet())
-            for(DataStruct d:datacollection.get(s))
-                if(d.getOwner().equals(Owner) || d.getShares().contains(Owner))
+            for(DataStruct2 d:datacollection.get(s))
+                if(s.equals(Owner) || d.getShares().contains(Owner))
                     tmp=(E) d.getData();
 
         return tmp;
@@ -148,7 +149,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!users.containsKey(Other)) throw  new UserNotFoundException("User not found");
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
-        for(DataStruct d:datacollection.get(Owner))
+        for(DataStruct2 d:datacollection.get(Owner))
             if(d.getData().equals(data) && !d.getShares().contains(Other))
                 d.addShare(Other);
     }
@@ -171,7 +172,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp= null;
-        List<DataStruct<E>> ls = datacollection.get(Owner);
+        List<DataStruct2<E>> ls = datacollection.get(Owner);
         for(int i=0;i < ls.size();i++)
         {
             if(ls.get(i).getData().equals(data)) {
@@ -188,7 +189,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
      @EFFECTS: Se il dato non è presente ritorna Null
                Se il dato è presente viene conservato in 'tmp' prima di essere rimosso dalla collezione e
                ritornato al chiamante
-                Se il dato è presente im molteplice copia verranno rimosse tutte e la funzione restituisce l'ultima rimossa
+               Se il dato è presente im molteplice copia verranno rimosse tutte e la funzione restituisce l'ultima rimossa
+               NOTA 'data' viene rimosso solo se Owner è il proprietario
      @THROWS: NullPointerException se owner == null || passw == null || data== null
               UserNotFoundException (checked) se Owner non è presente
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
@@ -221,9 +223,11 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         List<E> tmp = new ArrayList<>();
-        for(DataStruct d:datacollection.get(Owner))
-            if(d.getOwner().equals(Owner) || d.getShares().contains(Owner))
-                tmp.add((E)d.getData());
+        List<DataStruct2<E>> dt=datacollection.get(Owner);
+        for(String s:datacollection.keySet())
+            for(DataStruct2 d:datacollection.get(s))
+                if(s.equals(Owner) || d.getShares().contains(Owner))
+                    tmp.add((E)d.getData());
 
         return tmp.iterator();
     }

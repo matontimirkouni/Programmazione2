@@ -109,6 +109,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
                Se il dato è presente viene conservato in 'tmp' prima di essere rimosso dalla collezione e
                ritornato al chiamante
                Se il dato è presente im molteplice copia verranno rimosse tutte e la funzione restituisce l'ultima rimossa
+               NOTA 'data' viene rimosso solo se Owner è il proprietario
      @THROWS: NullPointerException se owner == null || passw == null || data== null
               UserNotFoundException (checked) se Owner non è presente
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
@@ -150,7 +151,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         int size=0;
         for(DataStruct d:datacollection)
         {
-            if(d.getOwner().equals(Owner))
+            if(d.getOwner().equals(Owner) )
                 size++;
         }
         return size;
@@ -158,7 +159,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     /**
      @REQUIRES: Owner != null && passw != null
      @EFFECTS: Superati i controlli di identità,restituisce size ovvero il numero degli elementi di un utente presenti
-              nella collezione (solo quelli di cui è proprietario)
+     nella collezione (solo quelli di cui è proprietario)
      @THROWS: NullPointerException se Owner == null || passw == null
               UserNotFoundException (checked) se l'utente non è presente (checkUserExitence(Id)=False
               WrongPasswordException se i controlli di indentità non sono rispettati
@@ -266,7 +267,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
             if((d.getOwner().equals(Owner)) || (d.getShares().contains(Owner)))
                 ls.add((E)d.getData());
 
-        //Collection<E> mycollection = Collections.unmodifiableCollection(ls);
+
         return ls.iterator();
     }
     /**

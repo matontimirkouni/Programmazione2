@@ -35,8 +35,15 @@ SCELTE 1° IMPLEMENTAZIONE (MySecureDataContainer)
 
 SCELTE 2° IMPLEMENTAZIONE (MySecureDataContainer2)
 
+        IMPLEMENTAZIONE di DataStruct
+            la classe serve per semplificare la memorizzazione dei dati dell'utente inoltre fornisce un supporto per ulteriori espansioni. Un oggetto
+            di tipo DataStruct è definito nel seguente modo:
+                String owner - utente proprietario
+                E data - dato di tipo E fornito dall'utente
+                ArrayList<String> shares - lista che contiene gli utenti che possono accedere al file
+
         IPOTESI E SCELTE:
-            Ho scelto di utilizzare come struttura dati due Hashtable :  Hashtable<String,List<E>> datacollection, Hashtable<String,String> users;
+            Ho scelto di utilizzare come struttura dati due Hashtable :  Hashtable<String,List<DataStruct<E>> datacollection, Hashtable<String,String> users;
             Non possono esistere utenti con lo stesso Id
             Solo il proprietario puo eliminare un dato
             Possono coesistere nella collezione di un utente dati uguali
