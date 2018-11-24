@@ -105,7 +105,7 @@ public class Main {
         //share di un dato
         try
         {
-            securecontainer.share("luca", "12345678","giovanni",dt1);
+            securecontainer.share("marco", "87654321","giovanni",dt1);
             System.out.println("Share eseguita correttamente");
         }
         catch(UserNotFoundException ex)

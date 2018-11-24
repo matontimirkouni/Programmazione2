@@ -5,7 +5,7 @@ import com.company.Exception.*;
 
 public interface SecureDataContainer<E> {
     //Overview : tipo di dato modificabile che rappresenta una collezione di dati di tipo E e di utenti proprietari
-    //Typical Element: {<users(0),data(0)>......<users(size-1),data(size-1)>}
+    //Typical Element:  F: USERNAME x PASSWORD  => DATI
 
 
     // Crea l’identità un nuovo utente della collezione

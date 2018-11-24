@@ -5,23 +5,23 @@ import java.util.*;
 import com.company.Exception.*;
 
 public class MySecureDataContainer <E> implements SecureDataContainer<E> {
-    //FA <Users,datacollec> dove
+    //FA <Users,datacollection> dove
     //users={users.get(0).......users.get(users.size-1)}
-    //datacollec={datacollec.get(0).....datacollec.get(datacollec.size - 1)}
+    //datacollection={datacollection.get(0).....datacollection.get(datacollection.size - 1)}
 
-    //IR: users != null && datacollec != null
-    //    forall i. 0<=i < users.size() => users.get(i) != null
-    //    forall i,j. 0<=i,j< users.size() i!= j => users.get(i) != users.get(j)
-    //    forall i. 0<=i < datacollec.size() => datacollec.get(i) != null
+    //IR: users != null && datacollection != null
+    //    forall i. 0 <= i < users.size() => users.get(i) != null
+    //    forall i,j. 0<= i,j< users.size() i != j => users.get(i) != users.get(j)
+    //    forall i. 0<= i < datacollection.size() => datacollection.get(i) != null
 
     private List<User> users;
-    private List<DataStruct<E>> datacollec;
+    private List<DataStruct<E>> datacollection;
 
 
     public MySecureDataContainer()
     {
         users= new ArrayList<>();
-        datacollec= new ArrayList<>();
+        datacollection= new ArrayList<>();
     }
 
     // Crea l’identità un nuovo utente della collezione
@@ -50,16 +50,16 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         //Rimuovo l'utente dalle autorizzazioni in altri file
-        for(DataStruct d:datacollec)
+        for(DataStruct d:datacollection)
             if(d.getShares().contains(Id))
                 d.getShares().remove(Id);
 
         //Rimuovo i dati di cui l'utente è proprietario
-        for(int i=0;i< datacollec.size();i++)
+        for(int i=0;i< datacollection.size();i++)
         {
-            DataStruct d = datacollec.get(i);
+            DataStruct d = datacollection.get(i);
             if(d.getOwner().equals(Id)) {
-                datacollec.remove(d);
+                datacollection.remove(d);
                 i--;
             }
         }
@@ -70,7 +70,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
 
     /**
      @REQUIRES: Id != null && passw != null
-     @MODIFIES: this.users && this.datacollec
+     @MODIFIES: this.users && this.datacollection
      @EFFECTS: Se l'utente è presente nella collezione rimuove i dati a lui associati ovvero quelli di cui è proprietario
               ed i riferimenti a lui nei file condivisi da altri utenti, per finire elimina l'utente dalla lista users
      @THROWS: NullPointerException se id == null || passw == null
@@ -89,12 +89,12 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp=null;
-        for(int i=0;i< datacollec.size();i++)
+        for(int i=0;i< datacollection.size();i++)
         {
-            DataStruct<E> d = datacollec.get(i);
+            DataStruct<E> d = datacollection.get(i);
             if((d.getOwner().equals(Owner)) && (d.getData().equals(data))){
                 tmp =  d.getData();
-                datacollec.remove(d);
+                datacollection.remove(d);
                 i--;
             }
         }
@@ -104,7 +104,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     }
     /**
      @REQUIRES: Owner != null && passw != null && data != null
-     @MODIFIES: this.datacollec
+     @MODIFIES: this.datacollection
      @EFFECTS: Se il dato non è presente ritorna Null
                Se il dato è presente viene conservato in 'tmp' prima di essere rimosso dalla collezione e
                ritornato al chiamante
@@ -114,7 +114,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
      **/
 
-    /**Attenzione quando restituire false? **/
+
     // Inserisce il valore del dato nella collezione
     // se vengono rispettati i controlli di identità
     public boolean put(String Owner, String passw, E data) throws UserNotFoundException,WrongPasswordException {
@@ -125,12 +125,11 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
 
 
         DataStruct<E> tmp= new DataStruct<>(Owner,data);
-        datacollec.add(tmp);
-        return true;
+        return datacollection.add(tmp);
     }
     /**
      @REQUIRES: Owner != null && passw != null && data != null
-     @MODIFIES: this.datacollec
+     @MODIFIES: this.datacollection
      @EFFECTS: Superati i controlli di identità, se 'data' non è presente nella collezione viene inserito ed attribuito
                ad Owner, la funzione restituisce : true
 
@@ -149,7 +148,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         int size=0;
-        for(DataStruct d:datacollec)
+        for(DataStruct d:datacollection)
         {
             if(d.getOwner().equals(Owner))
                 size++;
@@ -158,8 +157,8 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     }
     /**
      @REQUIRES: Owner != null && passw != null
-     @EFFECTS: Superati i controlli di identità,restituisce size ovvero il numero degli elementi di utente presenti
-               nella collezione
+     @EFFECTS: Superati i controlli di identità,restituisce size ovvero il numero degli elementi di un utente presenti
+              nella collezione (solo quelli di cui è proprietario)
      @THROWS: NullPointerException se Owner == null || passw == null
               UserNotFoundException (checked) se l'utente non è presente (checkUserExitence(Id)=False
               WrongPasswordException se i controlli di indentità non sono rispettati
@@ -177,7 +176,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp=null;
-        for(DataStruct<E> d:datacollec)
+        for(DataStruct<E> d:datacollection)
         {
             if(d.getData().equals(data) && (d.getOwner().equals(Owner) || d.getShares().contains(Owner))) {
                 tmp = d.getData();
@@ -206,8 +205,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         User u = getUserbyId(Owner);
         if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
-        DataStruct<E> tmp = getDataObject(Owner,data);
-        datacollec.add(tmp);
+        this.put(Owner,passw,data);
     }
     /**
      @REQUIRES: Owner != null && passw != null && data != null
@@ -231,8 +229,8 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
 
-        for(int i=0;i < datacollec.size();i++) {
-            DataStruct<E> d = datacollec.get(i);
+        for(int i=0;i < datacollection.size();i++) {
+            DataStruct<E> d = datacollection.get(i);
             if (d.getOwner().equals(Owner) && d.getData().equals(data)) {
                 if (d.getShares().contains(Other))
                     return;
@@ -244,14 +242,13 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     }
     /**
      @REQUIRES: Owner != null && passw != null &&  Other != null && data != null
-     @MODIFIES: this.datacollec
+     @MODIFIES: this.datacollection
      @EFFECTS: Superati i controlli di identità condivide un dato della collezione ovvero aggiunge 'Other' alla lista
                'Shares'
                Se 'data' è presente in molteplice copia, la condivisione verrà fatta per ogni singola copia
      @THROWS: NullPointerException se owner == null || passw == null || data== null || Other == nul
               UserNotFoundException (checked) se Owner oppure Other non sono presente
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
-              DuplicateUserException se Other è già autorizzato alla visione di data
      **/
 
 
@@ -265,13 +262,12 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         if(!u.checkPassword(passw)) throw new WrongPasswordException("Wrong password");
 
         ArrayList<E> ls = new ArrayList<>();
-        for(DataStruct d:datacollec)
+        for(DataStruct d:datacollection)
             if((d.getOwner().equals(Owner)) || (d.getShares().contains(Owner)))
                 ls.add((E)d.getData());
 
         //Collection<E> mycollection = Collections.unmodifiableCollection(ls);
-        Iterator<E> it = ls.iterator();
-        return it;
+        return ls.iterator();
     }
     /**
      @REQUIRES: Owner != null && passw != null
@@ -304,7 +300,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     //Ottiene l'oggetto DataStruct dato Owner e data
     private DataStruct getDataObject(String Owner,E data)
     {
-        for(DataStruct d:datacollec)
+        for(DataStruct d:datacollection)
             if(d.getOwner().equals(Owner) && d.getData().equals(data))
                 return d;
         return null;
