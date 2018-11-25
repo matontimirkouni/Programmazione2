@@ -123,10 +123,9 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         E tmp = null;
-        List<DataStruct2<E>> dt=datacollection.get(Owner);
         for(String s:datacollection.keySet())
             for(DataStruct2 d:datacollection.get(s))
-                if(s.equals(Owner) || d.getShares().contains(Owner))
+                if(d.equals(data) && (s.equals(Owner) || d.getShares().contains(Owner)))
                     tmp=(E) d.getData();
 
         return tmp;
@@ -223,7 +222,6 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         List<E> tmp = new ArrayList<>();
-        List<DataStruct2<E>> dt=datacollection.get(Owner);
         for(String s:datacollection.keySet())
             for(DataStruct2 d:datacollection.get(s))
                 if(s.equals(Owner) || d.getShares().contains(Owner))
