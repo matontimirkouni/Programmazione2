@@ -19,10 +19,11 @@ public class DataStruct2<E> {
     }
     /**
      @REQUIRES: data != null
+     @MODIFIES: this.data && this.shares
      @EFFECTS: Inizializza this.data e this.shares ai valori passati dal chiamante
      @THROWS: NullPointerException se owner == null || data == null
      **/
-    
+
     public ArrayList<String> getShares() {
         return shares;
     }
@@ -44,6 +45,7 @@ public class DataStruct2<E> {
     }
     /**
      @REQUIRES: id != null
+     @MODIFIES: this.shares
      @EFFECTS: Aggiunge Id alla lista degli share
      @THROWS: NullPointerException se id == null
      **/

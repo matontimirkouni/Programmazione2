@@ -22,6 +22,7 @@ public class DataStruct<E> {
     }
     /**
      @REQUIRES: owner != null && data != null
+     @MODIFIES: this.owner &&  this.data && this.shares
      @EFFECTS: Inizializza this.owner e this.data e this.shares ai valori passati dal chiamante
      @THROWS: NullPointerException se owner == null || data == null
      **/
@@ -54,6 +55,7 @@ public class DataStruct<E> {
     }
     /**
      @REQUIRES: id != null
+     @MODIFIES: this.shares
      @EFFECTS: Aggiunge Id alla lista degli share
      @THROWS: NullPointerException se id == null
      **/

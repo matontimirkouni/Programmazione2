@@ -19,6 +19,7 @@ public class User {
     }
     /**
      @REQUIRES: id != null && Password != null
+     @MODIFIES: this.id &&  this.Password 
      @EFFECTS: Inizializza this.id e this.password
      @THROWS: NullPointerException se id == null || Password == null
      **/
