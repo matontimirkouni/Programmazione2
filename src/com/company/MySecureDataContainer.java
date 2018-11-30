@@ -93,7 +93,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
             if((d.getOwner().equals(Owner)) && (d.getData().equals(data))){
                 tmp =  d.getData();
                 datacollection.remove(d);
-                i--;
+                i--; //Decremento l'indice poichè la lista si è ricompattata dopo la remove
             }
         }
 
@@ -179,7 +179,6 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         {
             if(d.getData().equals(data) && (d.getOwner().equals(Owner) || d.getShares().contains(Owner))) {
                 tmp = d.getData();
-
             }
         }
 
@@ -280,7 +279,6 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
 
     // ******** Metodi Ausiliari*********//
 
-
     //Controlla che l'utente è presente nella lista users
     private boolean checkUserExitence(String Owner)
     {
@@ -288,6 +286,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
             if(u.getId().equals(Owner)) return true;
         return false;
     }
+
     //Ottiene l'oggetto User dato l'Id
     private User getUserbyId(String Id)
     {
@@ -296,14 +295,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
                 return users.get(i);
         return null;
     }
-    //Ottiene l'oggetto DataStruct dato Owner e data
-    private DataStruct getDataObject(String Owner,E data)
-    {
-        for(DataStruct d:datacollection)
-            if(d.getOwner().equals(Owner) && d.getData().equals(data))
-                return d;
-        return null;
-    }
+
 
 
 }

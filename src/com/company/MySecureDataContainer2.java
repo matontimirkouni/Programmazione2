@@ -13,10 +13,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     //Datacollection={datacollection.get(i) | forall i in users.keySet()}
 
     //IR: users != null && datacollection !=  null
-    //forall user_i,user_j in users.keySet() => user_i != ususr_j
+    //forall user_i,user_j in users.keySet() => user_i != user_j
     //Da documentazione le Hashtable non possono contenere chiavi o valori null
-
-
 
     private Hashtable<String,List<DataStruct2<E>>> datacollection;
     private Hashtable<String,String> users;
@@ -229,11 +227,12 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         List<E> tmp = new ArrayList<>();
+        //Per ogni chiave nel keyset
         for(String s:datacollection.keySet())
             for(DataStruct2 d:datacollection.get(s))
                 if(s.equals(Owner) || d.getShares().contains(Owner))
                     tmp.add((E)d.getData());
-        //return  tmp.iterator();
+
         return Collections.unmodifiableList(tmp).iterator();
     }
     /**
@@ -245,30 +244,42 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
 
      **/
 
+
+    // ******** Metodi Ausiliari*********//
+
+
     //Metodo controllo identità
     public boolean checkUserPassword(String Id,String Passw)
     {
         String pass= users.get(Id);
         String tmp = getHash(Passw);
-        if(pass.equals(tmp))
+        if(tmp!= null && pass.equals(tmp))
             return true;
         return false;
     }
 
 
-    private String getHash(String str)
-    {
-        if(str==null) throw new NullPointerException();
+    //Metodo che genera un Hash di una stringa
+    private String getHash(String str) {
+        if (str == null) throw new NullPointerException();
+        //Classe che fornisce funzioni Hash One-Way
         MessageDigest msgD;
         try {
+            //Ritorna oggetto di tipo MessageDigest che implementa l'algoritmo 'SHA-256'
             msgD = MessageDigest.getInstance("SHA-256");
+            //Da impasto la stringa str al Digest
             msgD.update(str.getBytes());
+            //Ritorna il risultato della funzione Hash completo di padding
             return new String(msgD.digest());
-        }
-        catch (NoSuchAlgorithmException ex)
-        {
+        } catch (NoSuchAlgorithmException ex) {
             System.out.println("Eccezione algoritmo");
         }
-        return "none";
+        return null;
+
     }
+    /**
+     @REQUIRES: str != null
+     @EFFECTS: Restituisce un Hash di str se l'algoritmo 'SHA-256' non è presente ritorna  null
+     @THROWS: NullPointerException se str == null
+     **/
 }
