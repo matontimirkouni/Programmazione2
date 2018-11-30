@@ -10,8 +10,9 @@ DESCRIZIONE PROGETTO:
 		L'obiettivo del progetto è quello di implementare una collezione che si comporta come un Data Storage per la memorizzazione
 		e condivisione di dati (rappresentati nella simulazione da oggetti di tipo E)
 
-SCELTE 1° IMPLEMENTAZIONE (MySecureDataContainer)
+L'intero progetto è realizzato presupponendo l'utilizzo della Shallow Copy.
 
+SCELTE:
         IMPLEMENTAZIONE di User
             la classe serve per semplificare il sistema e fornire un supporto per ulteriori espansioni. Un oggetto di tipo User è definito
             nel seguente modo:
@@ -24,29 +25,19 @@ SCELTE 1° IMPLEMENTAZIONE (MySecureDataContainer)
                 String owner - utente proprietario
                 E data - dato di tipo E fornito dall'utente
                 ArrayList<String> shares - lista che contiene gli utenti che possono accedere al file
-
-        IPOTESI E SCELTE:
-            Ho scelto di utilizzare come struttura dati due liste :  List<User> e List<DataStruct<E>>
-            Non possono esistere utenti con lo stesso Id
-            Solo il proprietario puo eliminare un dato
-            Possono coesistere nella collezione di un utente dati uguali
-            Un utente puo accedere ad un dato della collezione (GET) solo se ne è il proprietario o è abilitato nella lista delle condivisioni
-
-
-SCELTE 2° IMPLEMENTAZIONE (MySecureDataContainer2)
-
         IMPLEMENTAZIONE di DataStruct2
-            la classe serve per semplificare la memorizzazione dei dati dell'utente inoltre fornisce un supporto per ulteriori espansioni. Un oggetto
-            di tipo DataStruct è definito nel seguente modo:
+             la classe serve per semplificare la memorizzazione dei dati dell'utente inoltre fornisce un supporto per ulteriori espansioni. Un oggetto
+             di tipo DataStruct è definito nel seguente modo:
                 E data - dato di tipo E fornito dall'utente
                 ArrayList<String> shares - lista che contiene gli utenti che possono accedere al file
 
         IPOTESI E SCELTE:
-            Ho scelto di utilizzare come struttura dati due Hashtable :  Hashtable<String,List<DataStruct<E>> datacollection, Hashtable<String,String> users;
             Non possono esistere utenti con lo stesso Id
             Solo il proprietario puo eliminare un dato
             Possono coesistere nella collezione di un utente dati uguali
             Un utente puo accedere ad un dato della collezione (GET) solo se ne è il proprietario o è abilitato nella lista delle condivisioni
+            L'iterator è restituito come una Collections.unmodifiableList quindi genera un eccezione nel caso si tenti di utilizzare
+            il metodo Remove()
 
 
 

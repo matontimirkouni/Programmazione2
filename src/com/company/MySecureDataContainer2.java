@@ -1,18 +1,22 @@
 package com.company;
+import java.lang.reflect.Array;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import com.company.Exception.*;
-
 import javax.xml.crypto.Data;
 
 public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
-    //FA <users,datacollection> dove
-    //users={users.get(0).......users.get(users.size-1)}
-    //datacollec={datacollec.get(0).....datacollec.get(datacollec.size - 1)}
+    //FA <Users,Passwords,Datacollection> dove
+    //Users=users.keySet()
+    //Passwords={users.get(i) | forall i in users.keySet()}
+    //Datacollection={datacollection.get(i) | forall i in users.keySet()}
 
     //IR: users != null && datacollection !=  null
-    //forall i. 0<=i < users.size() => users.get(i) != null
-    //forall i,j. 0<=i,j< users.size() i!= j => users.get(i) != users.get(j)
-    //forall i. 0<=i < datacollec.size() => datacollec.get(i) != null
+    //forall user_i,user_j in users.keySet() => user_i != ususr_j
+    //Da documentazione le Hashtable non possono contenere chiavi o valori null
+
+
 
     private Hashtable<String,List<DataStruct2<E>>> datacollection;
     private Hashtable<String,String> users;
@@ -21,6 +25,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
     {
         users= new Hashtable<>();
         datacollection=new Hashtable<>();
+
     }
 
     // Crea l’identità un nuovo utente della collezione
@@ -28,7 +33,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if((Id == null) || (passw == null)) throw new NullPointerException();
         if(users.containsKey(Id)) throw  new DuplicateUserException("Duplicated user");
 
-        users.put(Id,passw);
+        users.put(Id,getHash(passw));
     }
     /**
      @REQUIRES: Id != null && passw != null
@@ -74,8 +79,10 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         if(!checkUserPassword(Owner,passw)) throw new WrongPasswordException("Wrong password");
 
         int sz=0;
-        if(datacollection.get(Owner)!= null)
-            sz=datacollection.get(Owner).size();
+        for(String s:datacollection.keySet())
+            for(DataStruct2 d:datacollection.get(s))
+                if(s.equals(Owner) || d.getShares().contains(Owner))
+                    sz++;
         return sz;
     }
     /**
@@ -125,7 +132,7 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
         E tmp = null;
         for(String s:datacollection.keySet())
             for(DataStruct2 d:datacollection.get(s))
-                if(d.equals(data) && (s.equals(Owner) || d.getShares().contains(Owner)))
+                if(d.getData().equals(data) && (s.equals(Owner) || d.getShares().contains(Owner)))
                     tmp=(E) d.getData();
 
         return tmp;
@@ -226,8 +233,8 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
             for(DataStruct2 d:datacollection.get(s))
                 if(s.equals(Owner) || d.getShares().contains(Owner))
                     tmp.add((E)d.getData());
-
-        return tmp.iterator();
+        //return  tmp.iterator();
+        return Collections.unmodifiableList(tmp).iterator();
     }
     /**
      @REQUIRES: Owner != null && passw != null
@@ -237,11 +244,31 @@ public class MySecureDataContainer2 <E> implements SecureDataContainer<E>{
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
 
      **/
-    private boolean checkUserPassword(String Id,String Passw)
+
+    //Metodo controllo identità
+    public boolean checkUserPassword(String Id,String Passw)
     {
         String pass= users.get(Id);
-        if (pass.equals(Passw))
+        String tmp = getHash(Passw);
+        if(pass.equals(tmp))
             return true;
         return false;
+    }
+
+
+    private String getHash(String str)
+    {
+        if(str==null) throw new NullPointerException();
+        MessageDigest msgD;
+        try {
+            msgD = MessageDigest.getInstance("SHA-256");
+            msgD.update(str.getBytes());
+            return new String(msgD.digest());
+        }
+        catch (NoSuchAlgorithmException ex)
+        {
+            System.out.println("Eccezione algoritmo");
+        }
+        return "none";
     }
 }

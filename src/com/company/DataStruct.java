@@ -3,6 +3,10 @@ package com.company;
 import java.util.ArrayList;
 
 public class DataStruct<E> {
+    //Overview: classe di supporto per la gestione dei dati utente
+    //Typical Element: <owner,data,{share.get(0)....share.get(shares.size()-1)}
+    //IR: owner!= null && data != null && shares != null
+    //forall i. 0<=i< shares.size() => share.get(i) != null
 
     private String owner;
     private E data;

@@ -1,17 +1,16 @@
 package com.company;
-
-
 import java.util.*;
 import com.company.Exception.*;
 
 public class MySecureDataContainer <E> implements SecureDataContainer<E> {
-    //FA <Users,datacollection> dove
-    //users={users.get(0).......users.get(users.size-1)}
-    //datacollection={datacollection.get(0).....datacollection.get(datacollection.size - 1)}
+    //FA <Users,Passwords,Datacollection> dove
+    //Users={users.get(i).getId() | 0 <= i < users.size()}
+    //Passwords={users.get(i).getPassword() | 0 <= i < users.size()}
+    //Datacollection={<datacollection.get(i)>  | 0<= i < datacollection.size()}
 
     //IR: users != null && datacollection != null
     //    forall i. 0 <= i < users.size() => users.get(i) != null
-    //    forall i,j. 0<= i,j< users.size() i != j => users.get(i) != users.get(j)
+    //    forall i,j. 0<= i,j< users.size() i != j => users.get(i).getId() != users.get(j).getId()
     //    forall i. 0<= i < datacollection.size() => datacollection.get(i) != null
 
     private List<User> users;
@@ -65,7 +64,6 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         }
         //Rimuovo utente
         users.remove(getUserbyId(Id));
-
     }
 
     /**
@@ -151,7 +149,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
         int size=0;
         for(DataStruct d:datacollection)
         {
-            if(d.getOwner().equals(Owner) )
+            if(d.getOwner().equals(Owner) || d.getShares().contains(Owner) )
                 size++;
         }
         return size;
@@ -268,7 +266,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
                 ls.add((E)d.getData());
 
 
-        return ls.iterator();
+        return Collections.unmodifiableList(ls).iterator();
     }
     /**
      @REQUIRES: Owner != null && passw != null

@@ -5,6 +5,9 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class User {
+    //Overview: classe di supporto per la gestione degli  utenti
+    //Typical Element: <id,password>
+    //IR: id!= null && password != null
 
     private String id;
     private String password;
@@ -29,6 +32,9 @@ public class User {
         return false;
     }
 
+    public String getPassword() {
+        return password;
+    }
 
     private String getHash(String str)
     {
