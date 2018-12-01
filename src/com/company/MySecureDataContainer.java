@@ -208,7 +208,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     /**
      @REQUIRES: Owner != null && passw != null && data != null
      @MODIFIES: this
-     @EFFECTS: Crea una copia di 'data' nella collezione
+     @EFFECTS: Crea una copia di 'data' nella collezione se data non è presente viene inserito
      @THROWS: NullPointerException se owner == null || passw == null || data== null
               UserNotFoundException (checked) se Owner non è presente
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
@@ -269,7 +269,7 @@ public class MySecureDataContainer <E> implements SecureDataContainer<E> {
     }
     /**
      @REQUIRES: Owner != null && passw != null
-     @EFFECTS: Superati i controlli di identità restituisce un iteratore contenente i dati dell utente 'Owner'
+     @EFFECTS: Superati i controlli di identità restituisce un iteratore contenente i dati dell utente 'Owner' e i file a lui condivisi
      @THROWS: NullPointerException se owner == null || passw == null
               UserNotFoundException (checked) se Owner non è presente
               WrongPasswordException (checked) se non vengono rispettati i controlli di identità
