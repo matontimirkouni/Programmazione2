@@ -44,7 +44,7 @@ public class DataStruct2<E> {
         shares.add(Id);
     }
     /**
-     @REQUIRES: id != null
+     @REQUIRES: Id != null
      @MODIFIES: this.shares
      @EFFECTS: Aggiunge Id alla lista degli share
      @THROWS: NullPointerException se id == null

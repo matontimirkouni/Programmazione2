@@ -29,9 +29,9 @@ public class Main {
 
 
         //Implementazione 1
-        //MySecureDataContainer<ArrayList<String>> securecontainer = new MySecureDataContainer<>();
+        MySecureDataContainer<ArrayList<String>> securecontainer = new MySecureDataContainer<>();
         //Implementazione 2 (commentata)
-        MySecureDataContainer2<ArrayList<String>> securecontainer= new MySecureDataContainer2<>();
+        //MySecureDataContainer2<ArrayList<String>> securecontainer= new MySecureDataContainer2<>();
 
         System.out.println("#### TEST ####");
 
@@ -221,7 +221,7 @@ public class Main {
         //Crezione utenti eccezione utente gia esistente
         try
         {
-            System.out.println("Aggiungo un utente già esistente");
+            System.out.println("Aggiungo un utente gia' esistente");
             securecontainer.createUser("luca", "12345678");
         }
         catch(NullPointerException ex)
