@@ -3,14 +3,17 @@
 (* Operazioni *)
 type op = Plus | Minus | Times | Div ;;
 
-type variable = string
+type ide = string;;
 
 (* Espressioni *)
 type exp =
-	| Int_e of int
+	| Ide of ide
+	| Int of int
 	| Op_e of exp * op * exp
-	| Var_e of variable
-	| Let_e of variable * exp * exp
+	| Let of ide * exp * exp
+	| Add of exp * exp
+	| Minus of exp * exp
+	| Times of exp * exp
 	| True 
 	| False
 	| Not of exp
@@ -25,17 +28,22 @@ exception Unbound;;
 (* interprete op *)
 let evalop (v1:exp) (ope:op) (v2:exp) : exp =
 	match v1, ope, v2 with
-	| Int_e i , Plus, Int_e j -> Int_e (i+j)
-	| Int_e i , Minus, Int_e j -> Int_e (i-j)
-	| Int_e i , Times, Int_e j -> Int_e (i * j)
-	| Int_e i , Div, Int_e j -> Int_e (i / j)
+	| Int i , Plus, Int j -> Int (i+j)
+	| Int i , Minus, Int j -> Int (i-j)
+	| Int i , Times, Int j -> Int (i * j)
+	| Int i , Div, Int j -> Int (i / j)
 	| _ -> raise Unbound;;
 
+(* Casting  *)
+let asint = function Int x -> x | _ -> failwith "not integer";;
+
+let asstring = function Ide a -> a | _ -> failwith "not string";;
 
 (* interprete *)
-let rec eval  (e : exp) : exp  =
+let rec eval  e =
 	match e with
-		| Int_e i -> Int_e i
+		| Int i -> Int i
+		| Ide i -> Ide i (* Attenzione non corretto va fatto il bind *)
 		| True -> True
 		| False -> False
 		| Not(exp0) -> (match eval exp0 with
@@ -45,14 +53,23 @@ let rec eval  (e : exp) : exp  =
 		| And(exp1,exp2) -> (match (eval exp1,eval exp2) with
 								| (True,True) -> True
 								| (_,_) -> False)
-		|Op_e(exp0,op0,exp1) -> let ev1 = eval exp0 in
+		| Op_e(exp0,op0,exp1) -> let ev1 = eval exp0 in
 								let ev2 = eval exp1 in
-								evalop ev1 op0 ev2;;		
+								evalop ev1 op0 ev2
+		| Add(exp0,exp1) -> Int(asint(eval exp0) +  asint(eval exp1))
+		| Minus(exp0,exp1) -> Int(asint(eval exp0) -  asint(eval exp1))
+		| Times(exp0,exp1) -> Int(asint(eval exp0) *  asint(eval exp1));; 
+
+
+
 
 let p = eval(And(Not(True),True));;
 
-let p3= Op_e(Int_e(5),Times,Int_e(10));;
-let p4= Op_e(Int_e(5),Div,Int_e(10));;
+let p3= Op_e(Int(5),Times,Int(10));;
+let p4= Op_e(Int(5),Div,Int(10));;
+let p5 = Add(Int(5),Int(10));;
+let p6 = Times(Int(5),Int(10));;
+let p7 = Times(Ide("lol"),Ide("lols"));;
 eval p3;;
 
 									
