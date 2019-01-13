@@ -91,10 +91,11 @@ let eval_div (x,y) =
 	| (true,true,Int(x),Int(y)) -> Int (x / y)
 	| (_,_,_,_) -> failwith "errore di tipo";;
 
-let eq x y = if (typecheck ("int",x)) && (typecheck ("int",y))
-	then (match (x,y) with
-		(Int(n),Int(u)) -> Bool(n=u))
-	else failwith("Type error");;
+(* Equal *)
+let eq x y = 
+	match (typecheck("int",x),typecheck("int",y),x,y) with
+	| (true,true,Int(x),Int(y)) -> Bool(x=y)
+	| (_,_,_,_) -> failwith "errore di tipo";;
 
 
 (* interprete *)
