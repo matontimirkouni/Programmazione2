@@ -28,8 +28,6 @@ type exp =
 	| ApplyOver of exp * exp;;
 
 
-(* Eccezioni *)
-exception Unbound;;
 
 (* the empty environment *)
 type 't env = ide -> 't;;
@@ -109,7 +107,7 @@ let rec eval (e:exp) (r:evT env ) : evT =
 		|Not(exp0) -> (match eval exp0 r with
 							| Bool(true) -> Bool(false)
 							| Bool(false) -> Bool(true)
-							| _ -> raise Unbound)
+							| _ -> failwith "errore")
 		|And(exp1,exp2) -> (match (eval exp1 r,eval exp2 r) with
 								| (Bool(true), Bool(true)) ->  Bool(true)
 								| (_,_) ->  Bool(false))
@@ -121,7 +119,7 @@ let rec eval (e:exp) (r:evT env ) : evT =
 									|Bool(false) -> eval exp1 r
 									|_ -> failwith "errore" )
 		|Let (i,dich,body) -> 
-				let ival = eval dich r in (*valuta le dichiarazioni*)
+				let ival = eval dich r in 
 					let env1 = bind r i ival in
 						eval body env1
 		|Letrec (i,pfun,fbody,lbody) -> 
@@ -159,19 +157,24 @@ let rec eval (e:exp) (r:evT env ) : evT =
 	    			| Dictval(lst) -> Dictval(applyF lst exp0 r)
 	    			| _ -> failwith "errore")
 
-(* funzioni ausiliare*)
+
+(* ============  Funzioni ausiliare  ============= *)
+(* costruisce la lista *)      
 and  evallst (ls : (ide * exp) list) (r: evT env) : (ide * evT) list =
          match ls with
  		 | (i,exp0)::xs -> if(check2 xs i) then evallst xs r
  		 					else (i,eval exp0 r) :: evallst xs r
          		
          | [] -> []
+
+(* rimuove elemento *)        
 and removeitem (ls : (ide * evT) list) (item : ide) : (ide * evT) list =
 		 match ls with
 		 |(i,e)::xs -> if (i = item) then xs
 		 			   else (i,e)::removeitem xs item
 		 |[] -> []
 
+(* applica funzione f al dizionario*)
 and applyF (ls:(ide * evT) list) f (r:evT env) = 
 	match ls with  
 	|(den,exp0)::xs  -> let tfun = eval f r in
@@ -186,17 +189,22 @@ and applyF (ls:(ide * evT) list) f (r:evT env) =
 	    											(den,resu)::applyF xs f aEnv
 					| _ -> failwith "errore")
 	|[] -> []
-	
+
+(* controlla se un elemento con ide i è presente *)	
 and check (ls:(ide * evT) list) (i:ide) : bool = 
 	match ls with  
 	|(den,_)::xs  -> if (den = i) then true else check xs i
 	|[] -> false
 
+
+(* controlla se un elemento con ide i è presente *)	
 and check2 (ls:(ide * exp) list) (i:ide) : bool = 
 	match ls with  
 	|(den,_)::xs  -> if (den = i) then true else check2 xs i
 	|[] -> false
 
+
+(* cerca e ritorna un elemento del dizionario*)
 and findandreturn (ls:(ide * evT) list) (i:ide): evT = 
 	match ls with 
     |(den,key) :: xs -> if (den = i ) then key else findandreturn xs i
