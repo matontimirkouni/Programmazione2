@@ -28,20 +28,29 @@ type exp =
 	| ApplyOver of exp * exp;;
 
 
+(*AMBIENTE*)
 
-(* the empty environment *)
-type 't env = ide -> 't;;
-let emptyenv (v : 't) = function x -> v;;
-let applyenv (r: 't env) (i:ide) = r i ;;
-let bind (r: 't env) (i : ide) (v : 't) = 
-				function x -> if x= i then v 
-							else applyenv r x ;;
+(*Ambiente vuoto*)
+let emptyEnv = [];;
+
+(*binding*)
+let bind amb id vl = (id,vl)::amb;;
+
+(*Ricerca valore nell ambiente *)
+let rec lookup var env = match env with
+	|(nome,valore)::env1 -> if nome = var then valore else lookup var env1
+	|_ -> failwith "errore ambiente";;
+
+
+(*AMBIENTE*)
+type env = (ide * evT) list
+
 (* Tipi *)
-type evT = 
+and evT = 
     | Int of int
     | Bool of bool
-    | Funval of ide * exp * evT env 
-    | RecFunval of ide * ide * exp * evT env 
+    | Funval of ide * exp *  env 
+    | RecFunval of ide * ide * exp * env 
     | Dictval of (ide * evT) list
     | String of string
     | Unbound ;;
@@ -97,10 +106,10 @@ let eq x y =
 
 
 (* interprete *)
-let rec eval (e:exp) (r:evT env ) : evT =
+let rec eval (e:exp) (r: env ) : evT =
 	match e with
 		|EInt i ->  Int i
-		|Ide i -> applyenv r i
+		|Ide i -> lookup i r
 		|EString i -> String i
 		|EBool i-> Bool i
 		|Eq(exp0,exp1) -> eq (eval exp0 r) (eval exp1 r)
@@ -160,7 +169,7 @@ let rec eval (e:exp) (r:evT env ) : evT =
 
 (* ============  Funzioni ausiliare  ============= *)
 (* costruisce la lista *)      
-and  evallst (ls : (ide * exp) list) (r: evT env) : (ide * evT) list =
+and  evallst (ls : (ide * exp) list) (r:  env) : (ide * evT) list =
          match ls with
  		 | (i,exp0)::xs -> if(check2 xs i) then evallst xs r
  		 					else (i,eval exp0 r) :: evallst xs r
@@ -175,7 +184,7 @@ and removeitem (ls : (ide * evT) list) (item : ide) : (ide * evT) list =
 		 |[] -> []
 
 (* applica funzione f al dizionario*)
-and applyF (ls:(ide * evT) list) f (r:evT env) = 
+and applyF (ls:(ide * evT) list) f (r: env) = 
 	match ls with  
 	|(den,exp0)::xs  -> let tfun = eval f r in
 				  (match tfun  with
@@ -216,7 +225,7 @@ and findandreturn (ls:(ide * evT) list) (i:ide): evT =
 (* =============================  TESTS  GENERALI  ================= *)
 
 (* ambiente vuoto *)
-let env0 = emptyenv Unbound;;
+let env0 = emptyEnv;;
 
 (* test and *)
 let a1 = And(EBool true, EBool true);;
